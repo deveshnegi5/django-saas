@@ -4,9 +4,11 @@
 <p> Heeloo</p>
 {% include 'snippets/welcome-user.html' %}
 <h1>Count: {{queryset_count}}</h1>
+<h1>Percent: {{percent}}</h1>
 {% for data in queryset %}
 {{data.id}}
 {{data.visit_time}}
 {{data.page}}
+
 {% endfor %}
 {% endblock content %}
