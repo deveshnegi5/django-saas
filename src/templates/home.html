@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super }}home{% endblock title %}
+{% block content %}
+<p> Heeloo</p>
+{% include 'snippets/welcome-user.html' %}
+<h1>Count: {{queryset_count}}</h1>
+{% for data in queryset %}
+{{data.id}}
+{{data.visit_time}}
+{{data.page}}
+{% endfor %}
+{% endblock content %}
