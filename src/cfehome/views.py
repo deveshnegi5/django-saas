@@ -1,38 +1,48 @@
+import pathlib
 from django.shortcuts import render
-from visits.models import pagevisits
+from django.http import HttpResponse
 
-def homepage(request):
-    queryset=pagevisits.objects.all()
-    page_qs= pagevisits.objects.filter(page=request.path)
-    print(request.path)
-    print(page_qs.count())
-    print(queryset.count())
-    try:
-        percent=(page_qs.count()*100.0)/queryset.count()
-    except:
-        percent=0
-    context={"title": "Jai shree ram",
-             "queryset_count": queryset.count(),
-             "percent":percent,
-             "queryset": queryset}
-    template="home.html"
-    pagevisits.objects.create()
-    # print(queryset.visit_time)
-    return render(request,template,context)
+from visits.models import PageVisit
 
-def about(request):
-    queryset=pagevisits.objects.all()
-    page_qs= pagevisits.objects.filter(page=request.path)
-    print(request.path)
+this_dir = pathlib.Path(__file__).resolve().parent
+
+def home_view(request, *args, **kwargs):
+    return about_view(request, *args, **kwargs)
+
+
+def about_view(request, *args, **kwargs):
+    qs = PageVisit.objects.all()
+    page_qs = PageVisit.objects.filter(path=request.path)
     try:
-        percent=(page_qs*100)/queryset
+        percent = (page_qs.count() * 100.0) / qs.count()
     except:
-        percent=0
-    context={"title": "Jai shree ram",
-             "queryset_count": queryset.count(),
-             "percent":percent,
-             "queryset": queryset}
-    template="home.html"
-    pagevisits.objects.create()
-    # print(queryset.visit_time)
-    return render(request,template,context)
+        percent = 0
+    my_title = "My Page"
+    html_template = "home.html"
+    my_context = {
+        "page_title": my_title,
+        "page_visit_count": page_qs.count(),
+        "percent": percent,
+        "total_visit_count": qs.count(),
+    }
+    PageVisit.objects.create(path=request.path)
+    return render(request, html_template, my_context)
+
+
+def my_old_home_page_view(request, *args, **kwargs):
+    my_title = "My Page"
+    my_context = {
+        "page_title": my_title
+    }
+    html_ = """
+    <!DOCTYPE html>
+<html>
+
+<body>
+    <h1>{page_title} anything?</h1>
+</body>
+</html>    
+""".format(**my_context) # page_title=my_title
+    # html_file_path = this_dir / "home.html"
+    # html_ = html_file_path.read_text()
+    return HttpResponse(html_)
